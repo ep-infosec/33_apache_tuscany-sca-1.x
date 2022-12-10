@@ -1,0 +1,104 @@
+Implementation POJO Sample
+==========================
+This sample demonstrates how new implementation types are constructed for 
+Apache Tuscany SCA. 
+
+The README in the samples directory (the directory above this) provides 
+general instructions about building and running samples. Take a look there 
+first. 
+
+If you just want to run it to see what happens, open a command prompt,
+navigate to this sample directory, and do
+
+ant run
+
+OR if you don't have ant, on Windows do
+
+java -cp ..\..\lib\tuscany-sca-manifest.jar;target\sample-implementation-pojo-extension.jar;target\test-classes helloworld.HelloWorldTestClient
+
+and on *nix do
+
+java -cp ../../lib/tuscany-sca-manifest.jar:target/sample-implementation-pojo-extension.jar:target/test-classes helloworld.HelloWorldTestClient
+
+This looks like a long command. The three things we add to the classpath are
+
+tuscany-sca-manifest.jar                 - all of the standard Tuscany SCA 
+                                           runtime and extension classes
+sample-implementation-pojo-extension.jar - the new POJO implementation
+                                           extension 
+target.test-classes                      - application code that uses the
+                                           POJO implementation  
+
+Sample Overview
+---------------
+This sample contains a POJO implementation type as an example of how to create
+new implementation types.
+
+implementation-pojo-extension/
+  src/
+    main/
+      java/
+        pojo/                  - implementation model interfaces
+          impl/                - implementations of the model interfaces
+          provider/            - runtime implementation
+      resources/
+        META-INF/
+          services/            - declares the extension
+    test/
+      java/
+        helloworld/
+          HelloWorldTestCase.java - JUnit test case
+          HelloWorldTestClient.java - Test client with no JUnit dependency
+      resources/
+        helloworld.composite   - the SCA assembly used during unit testing
+
+  build.xml                    - the Ant build file
+  pom.xml                      - the Maven build file
+  
+Building The Sample Extension Using Ant
+-----------------------------------------
+With the binary distribution the sample extension can be built and run
+using Ant as follows
+
+cd implementation-pojo-extension
+ant compile
+ant run
+
+You should see the following output from the run target.
+
+run:
+     [java] Initializing POJO
+     [java] Initializing POJO
+     [java] Executing POJO sayHello
+     [java] Executing POJO sayHello
+     [java] Destroying POJO
+     [java] Destroying POJO
+
+Building The Sample Using Maven 
+-------------------------------------------
+With either the binary or source distributions the sample can be built 
+using Maven as follows. 
+
+cd implementation-pojo-extension
+mvn
+
+Maven will also test that the sample extension built properly. You should see 
+the following output from the test phase.
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running helloworld.HelloWorldTestCase
+Initializing POJO
+Initializing POJO
+Executing POJO sayHello
+Initializing POJO
+Initializing POJO
+Executing POJO sayHello
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.616 sec
+
+Results :
+
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+
+This shows that the Junit test cases have run successfully. 

@@ -1,0 +1,57 @@
+XML BigBank Demo
+================
+
+This demo showcases the integration with XML technologies in the service assembly.
+
+Note: The live currency exchange rate RSS feed and the live stock quote web service are not always running.
+When this happens, the demo code uses historical data instead of live data.
+
+To run the demo, do the following:
+
+cd xml-bigbank
+ant run
+
+You should see output similar to the following:
+
+Buildfile: build.xml
+
+run:
+     [java] Retrieving exchange rate...
+     [java] Exchange rate live quote not available, using historical data
+     [java] Loading account data...
+     [java] Getting stock quote...
+     [java] Server responded: <StockQuotes><Stock><Symbol>IBM</Symbol><Last>134.
+11</Last><Date>9/24/2010</Date><Time>4:00pm</Time><Change>0.00</Change><Open>N/A
+</Open><High>N/A</High><Low>N/A</Low><Volume>400</Volume><MktCap>169.1B</MktCap>
+<PreviousClose>134.11</PreviousClose><PercentageChange>0.00%</PercentageChange><
+AnnRange>116.00 - 134.25</AnnRange><Earns>10.582</Earns><P-E>12.67</P-E><Name>In
+ternational Bus</Name></Stock></StockQuotes>
+     [java] Calculating total value...
+     [java] Checking Balance: xs:double: 1000
+     [java] Saving Balance: xs:double: 20000
+     [java] Stock Price [1]: xs:double: 134.11
+     [java] Quantity: xs:double: 500
+     [java] Stock Value: xs:double: 67055
+     [java] Total Value [1]: xs:double: 88055
+     [java] Total Value=USD 88055.0
+     [java] EUR: 65254.91885
+
+BUILD SUCCESSFUL
+Total time: 5 seconds
+
+
+Building the Demo Using Ant
+---------------------------
+With the binary distribution the demo can be built using Ant as follows:
+
+cd xml-bigbank
+ant compile
+
+
+Building the Demo Using Maven 
+-----------------------------
+With either the binary or source distribution the demo can be built using
+Maven as follows:
+
+cd xml-bigbank
+mvn

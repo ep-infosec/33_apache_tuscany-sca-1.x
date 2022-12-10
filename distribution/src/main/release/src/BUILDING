@@ -1,0 +1,91 @@
+Building the Apache Tuscany SCA 1.6.1 November 2010 Release source distribution
+===============================================================================
+
+Initial Setup
+-------------
+
+1) Install either of the following:
+   a) Java SE 5.0 SDK (version 1.5.0_22 or higher), which can be downloaded from
+      http://java.sun.com/j2se/1.5.0/download.jsp
+   b) Java SE 6.0 SDK (version 1.6.0_07 or higher), which can be downloaded from
+      http://java.sun.com/javase/downloads
+
+2) Make sure that your JAVA_HOME environment variable is set to the installed 
+   JDK location, and that your PATH includes %JAVA_HOME%\bin (windows) or 
+   $JAVA_HOME$/bin (unix).
+
+3) Install Maven 2.0.10 or higher, which can be downloaded from 
+   http://maven.apache.org/download.html. Make sure that your PATH includes 
+   the $M2_HOME$/bin directory. 
+
+4) Make sure that your MAVEN_OPTS environment variable has -Xmx256m (or more)
+   and -XX:MaxPermSize=256m (or more). You can do this manually by executing
+   the following in your prompt:
+   Windows users:
+     set MAVEN_OPTS=-Xmx256m -XX:MaxPermSize=256m
+   Unix users:
+     export MAVEN_OPTS=-Xmx256m -XX:MaxPermSize=256m
+
+
+Building
+--------
+
+1) Change to the top level directory of the Apache Tuscany SCA source distribution.
+2) Run
+
+	$> mvn
+
+   This will compile Apache Tuscany SCA and run all of the tests in the source
+   distribution. 
+
+   Depending on the load of remote Maven 2.0 repositories, you may have 
+   to run 'mvn' several times utill the required dependencies are 
+   all located in your local maven repository. It usually takes some time for 
+   maven to download required dependencies in the first build. Once all the 
+   dependencies have been downloaded you may use the -o option to run maven
+   in offline mode, for example, 'mvn clean install -o'.
+
+
+Building the distributions
+--------------------------
+
+1) Change to the distribution folder
+2) Run
+
+	$> mvn
+
+   This will build the binary and source distributions with .zip and .gz 
+   formats in the distribution/target directory.
+
+
+Using an IDE
+------------
+
+The easiest way to work with Apache Tuscany SCA in an IDE is to use Maven to
+generate all of the IDE project files for you automatically. This works best
+if you generate IDE projects for all of the Apache Tuscany modules. You can
+then include the ones you are interested in working with in your IDE. 
+
+To build IDE project files for all of the modules in Apache Tuscany SCA;
+
+cd <sca-dir>
+
+where <sca-dir> is the top-level directory containing the all the
+Apache Tuscany SCA source code.  
+
+If you are an Eclipse user do the following
+
+mvn eclipse:eclipse
+mvn -Declipse.workspace=<path-to-eclipse-workspace> eclipse:add-maven-repo
+
+If you are an IDEA user do the following 
+
+mvn idea:idea
+
+These commands generate project files for each module in Apache Tuscany SCA. 
+The modules you are interested in can now be included in your IDE.
+
+For example, in Eclipse, if you create a new Java project and use the option
+to "create a new project from existing source" you can specify an SCA module
+directory, which includes the generated project files, and Eclipse will treat
+it like any other Java project. 

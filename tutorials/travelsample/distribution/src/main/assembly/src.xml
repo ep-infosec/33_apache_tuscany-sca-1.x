@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    * Licensed to the Apache Software Foundation (ASF) under one
+    * or more contributor license agreements.  See the NOTICE file
+    * distributed with this work for additional information
+    * regarding copyright ownership.  The ASF licenses this file
+    * to you under the Apache License, Version 2.0 (the
+    * "License"); you may not use this file except in compliance
+    * with the License.  You may obtain a copy of the License at
+    *
+    *   http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing,
+    * software distributed under the License is distributed on an
+    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    * KIND, either express or implied.  See the License for the
+    * specific language governing permissions and limitations
+    * under the License.
+-->
+<assembly>
+    <!-- id typically identifies the "type" (src vs bin etc) of the assembly -->
+    <id></id>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <baseDirectory>tuscany-scatours-${version}</baseDirectory>
+    <formats>
+<!-- 
+        <format>dir</format>
+-->
+        <format>tar.gz</format>
+        <format>zip</format>
+    </formats>
+
+    <fileSets>
+        <fileSet>
+            <directory>..</directory>
+            <outputDirectory>travelsample</outputDirectory>
+            <excludes>
+                <exclude>**/.*</exclude>
+                <exclude>**/.*/**</exclude>
+                <exclude>**/*.log</exclude>
+                <exclude>**/target</exclude>
+                <exclude>**/target/**/*</exclude>
+                <exclude>**/maven-eclipse.xml</exclude>
+            </excludes>
+        </fileSet>
+
+        <!-- Add the text files to the top-level directory -->
+        <fileSet>
+            <directory>src/main/release</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>BUILDING</include>
+                <include>CHANGES</include>
+                <include>LICENSE</include>
+                <include>NOTICE</include>
+                <include>README</include>
+                <include>RELEASE_NOTES</include>
+            </includes>
+        </fileSet>
+
+        <!-- Add binary dependencies to the lib directory -->
+        <fileSet>
+            <directory>../binaries/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>openejb/**/*</include>
+                <include>jaxws/**/*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <!-- Add tools dependencies to the lib directory -->
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <outputDirectory>lib/jaxws</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>com.sun.xml.ws:jaxws-tools</include>
+            </includes>
+            <scope>runtime</scope>
+        </dependencySet>
+
+        <!-- Add tools dependencies to the lib directory -->
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <outputDirectory>lib/junit</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>junit:junit</include>
+            </includes>
+            <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>

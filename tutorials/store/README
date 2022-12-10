@@ -1,0 +1,348 @@
+Store Tutorial
+==============
+
+This tutorial that shows how to use SCA and Tuscany to build multiple
+variations of an online Store application. The variations demonstrate the
+evolution of the Store as it goes through the following stages:
+
+1 - Initial online fruit store
+2 - Fruit store merges with vegetable store to form the fruit and vegetable store
+3 - The fruit and vegetable store moves to using a database for storing the cart
+4 - The fruit and vegetable store acts as a supplier to other online stores
+5 - The fruit and vegetable store ships their software solution to another geography
+6 - The fruit and vegetable store running in the enterprise
+
+For diagrams of the scenarios covered here, please refer to Tutorial.pdf
+
+Running The Tutorial Application
+--------------------------------
+
+If you're running the Store tutorial application for the first time since
+downloading the Tuscany SCA Java binary distribution, you need to start by
+running a setup step from the top-level store directory:
+
+   cd store
+   ant setup
+
+You only need to do this once. It creates some database files that are used
+by the tutorial application. If you forget to do it, you'll get errors when
+running some of the scenarios.
+
+Next, start the SCA Domain Manager:
+
+   cd domain
+   ant run
+
+Alternatively, on linux:
+
+   cd domain
+   java -jar ../../../modules/tuscany-node-launcher-${pom.version}.jar domain
+
+and on windows:
+
+   cd domain
+   java -jar ..\..\..\modules\tuscany-node-launcher-${pom.version}.jar domain
+
+Access the SCA Domain Manager application by pointing your Web browser at:
+
+   http://localhost:9990/ui/cloud/
+
+This shows you all of the Tuscany nodes that are configured to run 
+in the store tutorial domain. If you are interested, the configuration
+is stored on disc in the store/domain directory but for now let's just 
+start some nodes and see what happens.
+
+Starting nodes using the Domain Manager
+---------------------------------------
+
+The different nodes you see on the Cloud page are used to start different scenarios
+in the tutorial. Select the node you want to start (e.g StoreNode), then click the 
+Start button. You may need to give the nodes a little time to start up. Check the
+console where you lauched the domain manager application and you will see the 
+following message when nodes have started.
+
+INFO: INFO: Press 'q' to quit, 'r' to restart.
+
+Remember to shut down the nodes before you exit the domain manager application.
+
+Starting nodes from the command line
+------------------------------------
+
+When you start nodes using the Domain Manager, the nodes run in the same process
+as the Domain Manager.  In some cases (e.g., debugging a node) it may be better
+to start each node in its own separate process using the command line.  This can
+also be useful if you encounter problems with the Domain Manager becoming
+unresponsive or hanging.
+
+To start a node using the command line, open a separate command prompt for each
+node that you want to start.  At the command prompt, enter
+
+   cd domain
+   ant run<nodename>
+
+You need to replace <nodename> by the name of the node that you are starting,
+excluding the "Node" suffix.  For example, to start StoreNode you would enter
+
+   ant runStore
+
+When you start a node from the command line, the status column on the Cloud
+page of the Domain Manager doesn't update and the status column still shows
+the node as stopped even though it's running.  This doesn't affect the correct
+operation of the node.  To shut down the node, enter 'q' at the command prompt.
+
+Running the scenarios
+---------------------
+
+The following sections describe the nodes you need to start for each scenario
+and give some useful links to explore once the node has started. 
+
+1 - Initial online fruit store
+------------------------------
+
+Start 
+
+   StoreNode 
+
+The store itself can be found at 
+     
+   http://localhost:8100/ui/ 
+
+If you want to look at how Tuscany provides remote bindings you can take
+a look at the service description that Tuscany created automatically
+for the store catalog service which is exposed over a JSONRPC binding 
+Point your browser at:
+  
+    http://localhost:8100/StoreCatalog?smd
+  
+The service is configured in the SCA composite file in the following way:
+
+	<component name="StoreCatalog">
+		<implementation.java class="services.FruitsCatalogImpl"/> 
+		<property name="currencyCode">USD</property>
+		<service name="Catalog">
+			<t:binding.jsonrpc/>
+   		</service>
+		<reference name="currencyConverter" target="StoreCurrencyConverter"/>	
+	</component>   
+
+Note the inclusion of <t:binding.jsonrpc/>. This is all that is required to 
+make this service available over JSONRPC. If you want to expose the service
+over web services simply add <binding.ws/> instead of (or as well as) <t:binding.jsonrpc/>. 
+
+2 - Fruit store merges with vegetable store to form the fruit and vegetable store
+---------------------------------------------------------------------------------
+
+Start 
+
+   CatalogsNode
+   StoreMergerNode 
+
+The store itself can be found at 
+     
+   http://localhost:8101/ui/
+
+Now you see that there are more items in the catalog as the fruit and 
+vegetable catalogs are both providing content. The vegetable catalog
+that was introduced during the merger is contacted using web services.
+If you want to see the WSDL for the vegetable catalog point your browser
+at
+
+http://localhost:8200/VegetablesCatalogWebService?wsdl
+
+The vegetable catalog service is configured in an SCA composite file
+in the following way:
+
+	<component name="VegetablesCatalogWebService">
+		<implementation.java class="services.VegetablesCatalogImpl"/>
+		<service name="Catalog">
+			<binding.ws/>
+		</service> 
+	</component>
+
+3 - The fruit and vegetable store moves to using a database for storing the cart
+--------------------------------------------------------------------------------
+
+Start
+   
+   CatalogsNode
+   StoreDBNode 
+
+The store itself can be found at 
+
+   http://localhost:8102/ui/
+
+If you see an error at this stage, this probably means you haven't done the
+database setup mentioned in the section "Running The Tutorial Application".
+
+This looks the same as the scenario 2 store but this time a database is used
+for storing items put into the shopping cart. When you add items you 
+will see messages on the console indicating that items are added to the
+database. For example. 
+
+INFO: insert into Cart values ('cart-8c8bcc43-5036-4e9a-b282-0dd3d00d350c', 'Apple', '$2.99')
+
+This scenario shows how you change the implementation of a service without 
+changing any of the configuration of the rest of the application
+
+4 - The fruit and vegetable store acts as a supplier to other online stores
+---------------------------------------------------------------------------
+
+Start 
+
+   CatalogsNode
+   StoreSupplierNode
+
+The store itself can be found at 
+
+   http://localhost:8103/ui/
+  
+Again this is the same basic store as in scenario 3. However this time the 
+shopping cart and catalog services have been given additional remote bindings so that
+the services can be accessed by others. For example, take a look at the WSDL
+description of the shopping cart service that is now available at:
+
+   http://localhost:8333/ShoppinCartTotalWebService?wsdl
+
+This WSDL is available as the shopping cart total service is now configured with a web services
+binding in the following way:
+
+ 	<component name="StoreSupplierShoppingCart">
+		<implementation.java class="services.db.ShoppingCartTableImpl"/>
+		<property name="database">../store-supplier/target/cart-db</property>
+		<service name="Cart">
+			<t:binding.atom uri="/ShoppingCart/Cart"/>
+		</service>    	
+		<service name="Total">
+			<t:binding.jsonrpc/>
+			<binding.ws uri="/ShoppinCartTotalWebService"/>
+		</service>
+	</component>
+
+If you want to actually exercise these services from a standalone application
+you can run up the StoreClientNode by doing the following from a command prompt:
+
+   cd store-client
+   ant run
+
+5 - The fruit and vegetable store ships their software solution to another geography
+------------------------------------------------------------------------------------
+
+Start
+  
+   CatalogsNode
+   CurrencyNode
+   StoreEUNode
+
+The store itself can be found at 
+
+   http://localhost:8104/ui/
+
+Notice now that the prices are quoted in Euros and the language is French. This was 
+achieved by editing the store.html file to change the language and presentation to 
+be appropriate for Europe. The currency was changed by reconfiguring the catalog
+component to use EUR instead of USD.
+
+	<component name="StoreEUCatalog">
+		<implementation.java class="services.merger.MergedCatalogImpl"/> 
+		<property name="currencyCode">EUR</property>
+                ...
+        </component>
+
+6 - The fruit and vegetable store running in the enterprise
+-----------------------------------------------------------
+
+Start 
+
+   CatalogsNode
+   StoreEnterpriseNode 
+
+Separately run from a command prompt: 
+
+   cd domain
+   ant runWarehouseSpring
+
+This runs a launcher program which starts the node for the warehouse based on local
+configuration. It doesn't use the domain manager like the other nodes we started. 
+It also starts an ActiveMQ broker via which JMS messages will pass. 
+
+The store itself can be found at 
+     
+   http://localhost:8108/ui/
+
+The items in the catalog are much the same as the previous examples. 
+This time though when you place the order a message is sent over JMS to 
+the warehouse component running outside the domain and listening on JMS. 
+In this case we have implemented the warehouse application using SCA and it
+has its own UI. The UI can be found at
+
+   http://localhost:8088/ui/
+
+If you press the Refresh button, you should see the orders accumulating.
+You can't do anything with the orders but it is just a demo.
+
+The warehouse component is configured in the composite file in the following way:
+
+	<component name="Warehouse">
+		<implementation.java class="services.WarehouseImpl"/> 
+		<service name="Warehouse">
+			<t:binding.jsonrpc uri="http://localhost:8088/Warehouse"/>
+            <binding.jms initialContextFactory="org.apache.activemq.jndi.ActiveMQInitialContextFactory"
+                         jndiURL="tcp://localhost:61619">
+                <destination name="RequestQueue" create="ifnotexist"/>
+                <response>
+                    <destination name="ResponseQueue" create="ifnotexist"/>
+                </response> 
+            </binding.jms>
+   		</service>
+	</component> 
+
+And the shopping cart component that talks to it is configured as follows
+
+	<component name="StoreEnterpriseShoppingCart">
+		<implementation.java class="services.ShoppingCartImpl"/>
+		<service name="Cart">
+			<t:binding.atom uri="/ShoppingCart/Cart"/>
+		</service>    	
+		<service name="Total">
+			<t:binding.jsonrpc/>
+		</service>
+        <reference name="warehouse" multiplicity="0..1" >
+            <binding.jms initialContextFactory="org.apache.activemq.jndi.ActiveMQInitialContextFactory"
+                         jndiURL="tcp://localhost:61619">
+                 <destination name="RequestQueue" create="always"/>
+                 <response>
+                     <destination name="ResponseQueue" create="always"/>
+                 </response>
+            </binding.jms>
+        </reference>
+	</component>
+
+
+For more detailed information about how to get started with Apache Tuscany
+see our online guides at:
+
+http://tuscany.apache.org/sca-java-getting-started-guides-1x.html
+
+
+Building the Store Tutorial Using Ant
+-------------------------------------
+With the binary distribution the complete store tutorial can be built using Ant
+as follows:
+
+   cd store
+   ant compile
+
+This also creates the database files that were mentioned in the section
+"Running The Tutorial Application".
+
+
+Building the Store Tutorial Using Maven 
+---------------------------------------
+With either the binary or source distribution the complete store tutorial can
+be built using Maven as follows:
+
+   cd store
+   mvn
+
+This also creates the database files that were mentioned in the section
+"Running The Tutorial Application".

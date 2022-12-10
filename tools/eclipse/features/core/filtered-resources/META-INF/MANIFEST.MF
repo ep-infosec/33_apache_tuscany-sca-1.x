@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Tuscany SCA Eclipse Tools Core
+Bundle-SymbolicName: org.apache.tuscany.sca.feature.core
+Bundle-Version: ${tuscany.eclipse.version}
+Bundle-Vendor: Apache Software Foundation
